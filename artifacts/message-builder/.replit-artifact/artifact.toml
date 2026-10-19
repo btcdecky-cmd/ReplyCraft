@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "AI Message Builder"
+description = "A web app for turning conversation context into natural, editable message replies. Users paste a chat, review the inferred recipient and situation, choose a preferred tone, and generate a response they can copy."
+version = "1.0.0"
+id = "artifacts/message-builder"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22320
+
+[services.development]
+run = "pnpm --filter @workspace/message-builder run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/message-builder", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/message-builder/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22320"
+BASE_PATH = "/"
