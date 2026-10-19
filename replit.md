@@ -1,44 +1,49 @@
-# [Project name]
+# Kindred — AI Message Builder
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A web app that analyzes pasted conversations and creates editable replies in a selected tone.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the shared API server
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required secret: `GROQ_API_KEY` — used only by the API server for reply generation
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
+- Frontend: React + Vite
+- API: Express 5, Groq chat completions
+- Validation: generated Zod schemas
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/message-builder/` — web interface and theme
+- `artifacts/api-server/src/routes/message-builder.ts` — reply generation endpoint
+- `lib/api-spec/openapi.yaml` — source of truth for request and response contracts
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Groq is the requested AI provider; keep its key and API calls server-side.
+- Conversations are not persisted by the app; each draft is generated from the current page state.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Paste a message or conversation and choose a reply tone.
+- Infer the recipient, relationship, and conversation context.
+- Generate, edit, and copy a natural reply.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Use Groq for AI reply generation.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Conversation text is sent to Groq to generate a reply; do not describe it as staying only in the browser.
+- Keep `GROQ_API_KEY` out of frontend code and logs.
 
 ## Pointers
 

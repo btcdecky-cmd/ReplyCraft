@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: message-builder
+    description: AI-assisted conversation analysis and reply drafting
 paths:
   /healthz:
     get:
@@ -24,6 +26,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /message-builder/generate:
+    post:
+      operationId: generateMessageReply
+      tags: [message-builder]
+      summary: Analyze a conversation and draft a reply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageReplyInput"
+      responses:
+        "200":
+          description: Conversation analysis and reply draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageReplyDraft"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +53,34 @@ components:
           type: string
       required:
         - status
+    MessageReplyInput:
+      type: object
+      properties:
+        conversation:
+          type: string
+          minLength: 1
+          maxLength: 12000
+        tone:
+          type: string
+          minLength: 1
+          maxLength: 120
+      required:
+        - conversation
+        - tone
+    MessageReplyDraft:
+      type: object
+      properties:
+        recipient:
+          type: ["string", "null"]
+        relationship:
+          type: ["string", "null"]
+        context:
+          type: string
+        reply:
+          type: string
+      required:
+        - recipient
+        - relationship
+        - context
+        - reply
 
